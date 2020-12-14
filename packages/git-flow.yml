@@ -1,0 +1,12 @@
+- hosts: localhost
+  become: true
+  
+  tasks:
+    - name: git installed DOES NOT WORK
+      shell: git config --global user.email root@localhost && git config --global user.name root updates=/home/lberrocal/.gitconfig
+      become: yes
+      
+    - name: Install Git Flow
+      become: yes
+      apt:
+        package: git-flow
