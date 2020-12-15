@@ -16,6 +16,6 @@
         dest: /home/lberrocal/.bashrc
         state: present
         insertafter: 'EOF'
-        line: "export PATH=PATH$;{{ pycharm_bin_folder }}" 
+        line: "export PATH=$PATH:{{ pycharm_bin_folder }}" 
     
      

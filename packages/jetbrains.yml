@@ -15,7 +15,7 @@
         path: "{{ extracted_folder }}"
       register: extracted_folder_info
     - name: Download and extract Pycharm
-      when: extracted_folder_info.stat.exists
+      when: not extracted_folder_info.stat.exists
       unarchive:
         src: https://download.jetbrains.com/python/pycharm-professional-{{ pycharm_ver }}.tar.gz
         dest: "{{ download_folder }}"
@@ -28,12 +28,14 @@
         dest: "{{ pycharm_path }}"
         mode: 0755
         remote_src: yes
-    - name: Add {{pycharm_bin_folder}} to path
+    tasks:
+    - name: Add {{pycharm_path}}/bin to path
+      become: yes
       lineinfile: 
-        dest: /etc/environment
+        dest: /home/lberrocal/.bashrc
         state: present
-        backrefs: yes
-        regexp: 'PATH=(["]*)((?!.*?{{pycharm_bin_folder}}).*?)(["]*)$'
-        line: "PATH=\\1\\2:{{pycharm_bin_folder}}\\3" 
+        insertafter: 'EOF'
+        line: "export PATH=$PATH:{{ pycharm_bin_folder }}" 
+    
     
      
