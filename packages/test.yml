@@ -1,0 +1,21 @@
+- name: JetBrains
+  hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    pycharm_ver: 2020.3
+    pycharm_path: /opt
+    download_folder: /home/lberrocal/Downloads
+    extracted_folder: "{{ download_folder }}/pycharm-{{ pycharm_ver }}"
+    pycharm_bin_folder: "{{ pycharm_path }}/pycharm-{{ pycharm_ver }}/bin"
+
+  tasks:
+    - name: Add {{pycharm_path}}/bin to path
+      become: yes
+      lineinfile: 
+        dest: /home/lberrocal/.bashrc
+        state: present
+        insertafter: 'EOF'
+        line: "export PATH=PATH$;{{ pycharm_bin_folder }}" 
+    
+     

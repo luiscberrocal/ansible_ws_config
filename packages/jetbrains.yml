@@ -4,20 +4,36 @@
 
   vars:
     pycharm_ver: 2020.3
-    pycharm_archive: /home/lberrocal/Downloads/pycharm-professional-{{ pycharm_ver }}.tar.gz
+    pycharm_path: /opt
+    download_folder: /home/lberrocal/Downloads
+    extracted_folder: "{{ download_folder }}/pycharm-{{ pycharm_ver }}"
+    pycharm_bin_folder: "{{ pycharm_path }}/pycharm-{{ pycharm_ver }}/bin"
 
   tasks:
-    - name: Extract JetBrains Pycharm
+    - name: Check for downloaded folder
+      stat:
+        path: "{{ extracted_folder }}"
+      register: extracted_folder_info
+    - name: Download and extract Pycharm
+      when: extracted_folder_info.stat.exists
       unarchive:
         src: https://download.jetbrains.com/python/pycharm-professional-{{ pycharm_ver }}.tar.gz
-        dest: /home/lberrocal/Downloads
+        dest: "{{ download_folder }}"
         remote_src: yes
-        creates: /home/lberrocal/Downloads/pycharm-{{ pycharm_ver }}
+        creates: "{{ extracted_folder }}"
     - name: Install Pycharm
       become: yes
       copy:
-        src: /home/lberrocal/Downloads/pycharm-{{ pycharm_ver }}
-        dest: /usr/local/bin/pycharm
+        src: "{{ extracted_folder }}"
+        dest: "{{ pycharm_path }}"
         mode: 0755
         remote_src: yes
+    - name: Add {{pycharm_bin_folder}} to path
+      lineinfile: 
+        dest: /etc/environment
+        state: present
+        backrefs: yes
+        regexp: 'PATH=(["]*)((?!.*?{{pycharm_bin_folder}}).*?)(["]*)$'
+        line: "PATH=\\1\\2:{{pycharm_bin_folder}}\\3" 
+    
      
