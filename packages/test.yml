@@ -3,19 +3,18 @@
   connection: local
 
   vars:
-    pycharm_ver: 2020.3
-    pycharm_path: /opt
+    conda_ver: 2020.11
     download_folder: /home/lberrocal/Downloads
-    extracted_folder: "{{ download_folder }}/pycharm-{{ pycharm_ver }}"
-    pycharm_bin_folder: "{{ pycharm_path }}/pycharm-{{ pycharm_ver }}/bin"
+    installer_file: "{{ download_folder }}/Anaconda3-{{ conda_ver }}-Linux-x86_64.sh"
+    installation_folder: /opt/anaconda3
 
   tasks:
-    - name: Add {{pycharm_path}}/bin to path
+    - name: Add {{installation_folder}}/bin to path
       become: yes
       lineinfile: 
         dest: /home/lberrocal/.bashrc
         state: present
         insertafter: 'EOF'
-        line: "export PATH=$PATH:{{ pycharm_bin_folder }}" 
+        line: "export PATH=$PATH:{{ installation_folder }}/bin" 
     
      

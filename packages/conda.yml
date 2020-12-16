@@ -32,6 +32,26 @@
         recurse: yes
     - name: Run anaconda installer
       shell: "{{ installer_file }} -b -u -p {{ installation_folder }}"
-      
-     
-        
+    - name: Add {{installation_folder}}/bin to path
+      become: yes
+      lineinfile: 
+        dest: /home/lberrocal/.bashrc
+        state: present
+        insertafter: 'EOF'
+        line: "export PATH=$PATH:{{ installation_folder }}/bin" 
+    - name: conda - read permission for all
+      become: True
+      file:
+        path: "{{ installation_folder }}"
+        mode: +r
+        recurse: yes
+    - name: conda - execution permission for all
+      become: True
+      file:
+        path: "{{ installation_folder }}"
+        mode: +x
+        recurse: yes
+    - name: Load .bashrc
+      shell: "source /home/lberrocal/.bashrc"
+    - name: Initilize conda
+      shell: "conda init bash"
