@@ -9,12 +9,8 @@
     installation_folder: /opt/anaconda3
 
   tasks:
-    - name: Add {{installation_folder}}/bin to path
+    - name: Load .bashrc and initialize conda
       become: yes
-      lineinfile: 
-        dest: /home/lberrocal/.bashrc
-        state: present
-        insertafter: 'EOF'
-        line: "export PATH=$PATH:{{ installation_folder }}/bin" 
+      shell: "{{ installation_folder }}/bin/conda init bash"
     
      

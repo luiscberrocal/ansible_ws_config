@@ -51,7 +51,5 @@
         path: "{{ installation_folder }}"
         mode: +x
         recurse: yes
-    - name: Load .bashrc
-      shell: "source /home/lberrocal/.bashrc"
-    - name: Initilize conda
-      shell: "conda init bash"
+
+   
