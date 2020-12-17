@@ -1,0 +1,16 @@
+- name: Keepass
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: Update APT package list
+      become: yes
+      apt:
+        update_cache: yes
+      register: apt_update
+      retries: 5
+      until: apt_update is success
+    - name: Install keepass2
+      become: yes
+      apt:
+        package: keepass2
