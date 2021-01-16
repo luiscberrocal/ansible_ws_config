@@ -1,23 +1,18 @@
-- name: Dropbox
-  hosts: 127.0.0.1
-  connection: local
-  vars:
-    version: 2020.03.04
-    download_folder: /home/lberrocal/Downloads
-    installer_file: "{{ download_folder }}/dropbox_{{ version }}_amd64.deb"
-    deb_url: "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_{{ version }}_amd64.deb"
-  tasks:
-    - name: Check for downloaded file
-      stat:
-        path: "{{ installer_file }}"
-      register: installer_file_info
-
-    - name: Download Dropbox installer
-      when: not installer_file_info.stat.exists
-      get_url:
-        url: "{{ deb_url }}"
-        dest: "{{ installer_file }}"
-        mode: 0550
-    - name: Install Dropbox
-      apt:
-        deb: "{{ installer_file }}"
+- name: Check for downloaded file
+  stat:
+    path: "{{ docker_installer }}"
+  register: installer_file_info
+- name: Install python3-gpg
+  become: yes
+  apt:
+    package: python3-gpg
+- name: Download Dropbox installer
+  when: not installer_file_info.stat.exists
+  get_url:
+    url: "{{ docker_url }}"
+    dest: "{{ docker_installer }}"
+    mode: 0550
+- name: Install Dropbox
+  apt:
+    deb: "{{ docker_installer }}"
+#  creates: /home/{{ current_user }}/.dropbox-dist/dropboxd

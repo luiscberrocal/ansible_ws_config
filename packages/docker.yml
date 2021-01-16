@@ -43,7 +43,7 @@
 - name: Enable Docker engine for current user
   become: yes
   user:
-    name={{ lookup('env', "USER") }}
+    name={{ current_user }}
     groups=docker
     append=yes
 
