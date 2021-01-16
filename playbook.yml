@@ -1,7 +1,7 @@
 - hosts: localhost
   become: true
   vars:
-    docker_distribution: "'Pop!_OS'"
+    docker_distribution: "ubuntu"
   tasks:
     - name: Install vim
       apt: name=vim
@@ -32,4 +32,6 @@
       become: yes
       apt:
         package: google-chrome-stable
+    - name: Install docker
+      include_tasks: ./packages/docker.yml
         
