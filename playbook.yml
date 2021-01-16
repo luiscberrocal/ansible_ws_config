@@ -1,10 +1,16 @@
 - hosts: localhost
   become: true
   vars:
-    docker_distribution: "'Pop!_OS'"
+    docker_distribution: "ubuntu"
+    current_user: "luiscberrocal"
+    version: 2020.03.04
+    download_folder: /home/{{ current_user }}/Downloads
+    docker_installer: "{{ download_folder }}/dropbox_{{ version }}_amd64.deb"
+    docker_url: "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_{{ version }}_amd64.deb"
   tasks:
     - name: Install vim
-      apt: name=vim
+      apt:
+        name: vim-nox
         
     - name: Add Google APT package key
       become: yes
@@ -32,4 +38,13 @@
       become: yes
       apt:
         package: google-chrome-stable
+
+    - name: Install docker subtasks
+      include_tasks: ./packages/docker.yml
+
+    - name: Install dropbox subtasks
+      include_tasks: ./packages/dropbox.yml
+
+    - name: Install keepass subtasks
+      include_tasks: ./packages/keepass.yml
         
