@@ -1,0 +1,28 @@
+- name: Ansible environments
+  hosts: localhost
+  vars:
+    pycharm_folder: "{{ ansible_facts.env.HOME }}/PycharmProjects"
+    username: "{{ ansible_facts.env.USER }}"
+    clean: "yes"
+  tasks:
+    - name: Print all available facts
+      debug:
+        msg: "{{ ansible_distribution }}, {{ username }}"
+    - name: Clean up docker
+      apt:
+        name: [ 'docker', 'docker-engine', 'docker.io', 'containerd', 'runc', 'docker-
+              ce', 'docker-ce-cli', 'containerd.io' ]
+        state: absent
+        purge: yes
+      when: clean == 'yes'
+    - name: Clean docker folder
+      become: yes
+      file:
+        path: /var/lib/docker
+        state: absent
+      when: clean == 'yes'
+    - name: Add Docker APT package key
+      become: yes
+      apt_key:
+        id: 0EBFCD88
+        url: https://download.docker.com/linux/ubuntu/gpg
