@@ -1,0 +1,18 @@
+- name: Linux command utilities
+  hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    download_folder: "{{ ansible_facts.env.HOME }}/Downloads"
+
+  tasks:
+    - name: Print variables
+      debug:
+        msg: "Family: {{ansible_os_family}}"
+    - name: CLI utils
+      become: yes
+      apt:
+        name: [ "trash-cli", "neofetch" , "htop", "ncdu"]
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Pop!_OS"
