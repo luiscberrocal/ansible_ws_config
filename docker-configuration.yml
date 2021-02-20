@@ -1,0 +1,75 @@
+- name: Ansible environments
+  hosts: localhost
+  vars:
+    pycharm_folder: "{{ ansible_facts.env.HOME }}/PycharmProjects"
+    username: "{{ ansible_facts.env.USER }}"
+    clean: "yes"
+    install_docker: "yes"
+  tasks:
+    - name: Print all available facts
+      debug:
+        msg: "{{ ansible_distribution }}, {{ ansible_distribution_release }}"
+    - name: Clean up previous installations of docker
+      apt:
+        name: [ 'docker', 'docker-engine', 'docker.io', 'containerd', 'runc', 'docker-
+              ce', 'docker-ce-cli', 'containerd.io' ]
+        state: absent
+        purge: yes
+      when: clean == 'yes'
+    - name: Clean docker configuration folders
+      become: yes
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - /var/lib/docker
+        - /etc/docker
+      when: clean == 'yes'
+    - name: Add Docker APT package key
+      become: yes
+      apt_key:
+        id: 0EBFCD88
+        url: https://download.docker.com/linux/ubuntu/gpg
+    - name: Install docker dependencies
+      apt:
+        name: ['apt-transport-https','ca-certificates', 'curl', 'gnupg-agent' ,'software-properties-common']
+        state: present
+    - name: Add Docker APT package repository
+      become: yes
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        filename: docker
+        update_cache: no
+      register: apt_repository
+    - name: Update APT package list
+      become: yes
+      apt:
+        update_cache: yes
+      #when: apt_repository.changed
+      register: apt_update
+      retries: 5
+      until: apt_update is success
+    - name: Install docker apps
+      become: yes
+      apt:
+        name: ['docker-ce'] #, 'docker-ce-cli', 'containerd.io']
+        state: present
+      when: install_docker == 'yes'
+    - name: Run Hello World with sudo
+      become: yes
+      shell: docker run hello-world
+      when: install_docker == 'yes'
+    - name: Create docker group
+      group:
+        name: docker
+        state: present
+    - name: Enable Docker engine for current user
+      become: yes
+      user:
+        name={{ username }}
+        groups=docker
+        append=yes
+    - name: Run Hello World with sudo
+      shell: docker run hello-world
+      when: install_docker == 'yes'
+
