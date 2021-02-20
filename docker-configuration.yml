@@ -1,4 +1,4 @@
-- name: Ansible environments
+- name: Docker configuration
   hosts: localhost
   vars:
     pycharm_folder: "{{ ansible_facts.env.HOME }}/PycharmProjects"
