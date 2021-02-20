@@ -9,12 +9,13 @@
     installation_folder: /opt/anaconda3
     
   tasks:
-    - name: Prerequisites for Anaconda
+    - name: Prerequisites for Anaconda {{ conda_ver }} in {{ansible_os_family}}
+      become: yes
       apt:
         name: ["libgl1-mesa-glx", "libegl1-mesa", "libxrandr2", "libxrandr2", "libxss1", "libxcursor1",
                "libxcomposite1", "libasound2", "libxi6", "libxtst6"]
         state: present
-      when: ansible_os_family == "Debian"
+      when: ansible_os_family == "Pop!_OS"
 
     - name: Check for downloaded file in {{ download_folder }}
       stat:
@@ -29,6 +30,11 @@
         dest: "{{ installer_file }}"
         checksum: "md5:4cd48ef23a075e8555a8b6d0a8c4bae2"
         mode: 0550
+    - name: Delete conda folder in {{ installation_folder }}
+      become: yes
+      file:
+        path: "{{ installation_folder }}"
+        state: absent
     - name: Create conda folder in {{ installation_folder }}
       become: yes
       file:
