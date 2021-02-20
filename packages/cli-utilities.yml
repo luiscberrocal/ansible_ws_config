@@ -15,4 +15,4 @@
         name: [ "trash-cli", "neofetch" , "htop", "ncdu"]
         state: present
         update_cache: yes
-      when: ansible_os_family == "Pop!_OS"
+      when: ansible_os_family == "Pop!_OS" or ansible_os_family == "Debian"
